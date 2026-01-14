@@ -1,7 +1,9 @@
 {
   "schemaVersion": 2,
   "dockerfilePath": "Dockerfile",
-  "buildArgs": {
-    "SCOPE": "@typebot.io/server"
-  }
+"buildArgs": {
+  "SCOPE": "@typebot.io/server",
+  "APP_DIR": "server"
+}
+
 }
