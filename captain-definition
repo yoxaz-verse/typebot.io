@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "dockerfilePath": "apps/server/Dockerfile",
+  "dockerfilePath": "Dockerfile",
   "buildArgs": {
     "SCOPE": "server"
   }
