@@ -38,7 +38,7 @@ WORKDIR /app
 FROM base AS pruned
 
 COPY . .
-RUN bunx turbo prune viewer --docker
+RUN bunx turbo prune builder --docker
 
 
 # ================= BUILD ========================
@@ -50,7 +50,7 @@ COPY bun.lock bunfig.toml ./
 RUN bun install
 
 RUN SKIP_ENV_CHECK=true \
-    bunx turbo build --filter=viewer
+    bunx turbo build --filter=builder
 
 
 # ================= RELEASE ======================
@@ -61,9 +61,9 @@ ENV PORT=3000
 
 COPY --from=builder /app/node_modules ./node_modules
 
-COPY --from=builder /app/apps/viewer/.next/standalone ./
-COPY --from=builder /app/apps/viewer/.next/static ./apps/viewer/.next/static
-COPY --from=builder /app/apps/viewer/public ./apps/viewer/public
+COPY --from=builder /app/apps/builder/.next/standalone ./
+COPY --from=builder /app/apps/builder/.next/static ./apps/builder/.next/static
+COPY --from=builder /app/apps/builder/public ./apps/builder/public
 
 EXPOSE 3000
 CMD ["node", "server.js"]
