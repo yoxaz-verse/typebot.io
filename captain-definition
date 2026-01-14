@@ -2,6 +2,6 @@
   "schemaVersion": 2,
   "dockerfilePath": "Dockerfile",
   "buildArgs": {
-    "SCOPE": "server"
+    "SCOPE": "@typebot.io/server"
   }
 }
