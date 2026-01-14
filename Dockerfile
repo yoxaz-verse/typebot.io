@@ -38,7 +38,7 @@ WORKDIR /app
 FROM base AS pruned
 
 COPY . .
-RUN bunx turbo prune "@typebot.io/server" --docker
+RUN bunx turbo prune viewer --docker
 
 
 # ================= BUILD ========================
@@ -47,11 +47,10 @@ FROM base AS builder
 COPY --from=pruned /app/out/full/ .
 COPY bun.lock bunfig.toml ./
 
-RUN SENTRYCLI_SKIP_DOWNLOAD=1 bun install
+RUN bun install
 
 RUN SKIP_ENV_CHECK=true \
-    NEXT_PUBLIC_VIEWER_URL=http://localhost \
-    bunx turbo build --filter="@typebot.io/server"
+    bunx turbo build --filter=viewer
 
 
 # ================= RELEASE ======================
@@ -61,17 +60,10 @@ ENV NODE_ENV=production
 ENV PORT=3000
 
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/packages/prisma/postgresql ./packages/prisma/postgresql
 
-COPY --from=builder /app/apps/server/.next/standalone ./
-COPY --from=builder /app/apps/server/.next/static ./apps/server/.next/static
-COPY --from=builder /app/apps/server/public ./apps/server/public
-
-RUN ./node_modules/.bin/prisma generate \
-    --schema=packages/prisma/postgresql/schema.prisma
-
-COPY scripts/server-entrypoint.sh ./
-RUN chmod +x ./server-entrypoint.sh
+COPY --from=builder /app/apps/viewer/.next/standalone ./
+COPY --from=builder /app/apps/viewer/.next/static ./apps/viewer/.next/static
+COPY --from=builder /app/apps/viewer/public ./apps/viewer/public
 
 EXPOSE 3000
-ENTRYPOINT ./server-entrypoint.sh
+CMD ["node", "server.js"]
